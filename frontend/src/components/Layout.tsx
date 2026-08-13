@@ -60,6 +60,11 @@ export function Layout() {
             </NavLink>
           ))}
         </nav>
+        <div className="mt-auto pt-6 pb-2">
+          <Text variant="bodySmall" className="text-slate-400 text-xs text-center font-medium">
+            Powered by <br /><span className="text-slate-500 font-semibold">Code Campus Int.</span>
+          </Text>
+        </div>
       </aside>
       <div className="flex flex-1 flex-col">
         <header className="flex min-h-[44px] items-center justify-between border-b border-slate-200 bg-white px-6 py-3">

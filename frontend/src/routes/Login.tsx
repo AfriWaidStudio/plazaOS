@@ -66,6 +66,11 @@ export function Login() {
           </Button>
         </form>
       </Card>
+      <div className="absolute bottom-6 text-center w-full">
+        <Text variant="bodySmall" className="text-slate-400 font-medium tracking-wide">
+          Powered by <span className="text-slate-500 font-semibold">Code Campus International.</span>
+        </Text>
+      </div>
     </div>
   )
 }
