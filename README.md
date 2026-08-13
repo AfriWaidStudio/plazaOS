@@ -58,6 +58,14 @@ Full palette, typography, spacing, and component rules live in the shared design
 - Branch naming: `feature/<short-description>`, e.g. `feature/admin-units`, `feature/tenant-payments`
 - Commit in small, logical chunks with conventional commit messages (`feat:`, `fix:`, `setup:`, `chore:`)
 - Every PR needs at least one review before merging, including between just two contributors
+ 
+## Deployment
+
+This project uses **Render** for hosting the backend and running background cron jobs. A Blueprint file (`render.yaml`) is included in the project root. To deploy:
+1. Connect your Render account to this repository.
+2. In the Render Dashboard, click **New+** -> **Blueprint**.
+3. Select this repository. Render will automatically provision the Node web service and the cron job.
+4. Supply the required environment variables (like `MONGODB_URI` for your Atlas instance) in the dashboard.
 
 ## Build Order
 

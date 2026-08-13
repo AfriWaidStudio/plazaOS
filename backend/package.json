@@ -12,7 +12,8 @@
     "test:cloudinary": "tsx scripts/test-cloudinary.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
-    "test": "vitest run"
+    "test": "vitest run",
+    "cron": "tsx scripts/cron.ts"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
