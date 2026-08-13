@@ -74,8 +74,9 @@ export function requireAuth(request: NextRequest): TokenPayload {
   return verifyToken(header.slice('Bearer '.length))
 }
 
-export function requireRole(request: NextRequest, role: TokenPayload['role']): TokenPayload {
+export function requireRole(request: NextRequest, role: TokenPayload['role'] | TokenPayload['role'][]): TokenPayload {
   const user = requireAuth(request)
-  if (user.role !== role) throw new ApiError('Forbidden', 403)
+  const allowedRoles = Array.isArray(role) ? role : [role]
+  if (!allowedRoles.includes(user.role)) throw new ApiError('Forbidden', 403)
   return user
 }
