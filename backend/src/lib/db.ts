@@ -27,17 +27,19 @@ export async function dbConnect(): Promise<typeof mongoose> {
       // Auto-bootstrap admin on first boot in production if no admin exists
       try {
         const adminCount = await User.countDocuments({ role: 'admin' })
-        if (adminCount === 0 && process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD) {
-          const passwordHash = await hashPassword(process.env.ADMIN_PASSWORD)
+        if (adminCount === 0) {
+          const email = process.env.ADMIN_EMAIL || 'plaza-os@codecampus.com.ng'
+          const password = process.env.ADMIN_PASSWORD || 'CodeCampus2026'
+          const passwordHash = await hashPassword(password)
           await User.create({
             name: process.env.ADMIN_NAME || 'Admin',
-            email: process.env.ADMIN_EMAIL.toLowerCase(),
+            email: email.toLowerCase(),
             passwordHash,
             role: 'admin',
             accountStatus: 'active',
             mustChangePassword: false,
           })
-          console.log('Successfully bootstrapped default admin account.')
+          console.log(`Successfully bootstrapped default admin account: ${email}`)
         }
       } catch (err) {
         console.error('Failed to bootstrap admin:', err)
