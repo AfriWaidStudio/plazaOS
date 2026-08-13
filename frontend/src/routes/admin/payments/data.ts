@@ -21,17 +21,7 @@ export interface GetPaymentsResult {
   pageSize: number
 }
 
-function comparePayments(a: Payment, b: Payment, sortBy: PaymentSortField): number {
-  switch (sortBy) {
-    case 'tenantName':
-      return a.tenantName.localeCompare(b.tenantName)
-    case 'amount':
-      return a.amount - b.amount
-    case 'date':
-    default:
-      return a.date.localeCompare(b.date)
-  }
-}
+
 
 // Mirrors GET /payments's own in-memory filter/sort/paginate logic — used
 // only as a DEV-mode fallback (see getPayments()) when the backend isn't

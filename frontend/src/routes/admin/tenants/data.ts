@@ -21,19 +21,7 @@ export interface GetTenantsResult {
   pageSize: number
 }
 
-function compareTenants(a: Tenant, b: Tenant, sortBy: TenantSortField): number {
-  switch (sortBy) {
-    case 'unitNumber':
-      return a.unitNumber.localeCompare(b.unitNumber, undefined, { numeric: true })
-    case 'leaseEnd':
-      return a.leaseEnd.localeCompare(b.leaseEnd)
-    case 'rentStatus':
-      return a.rentStatus.localeCompare(b.rentStatus)
-    case 'name':
-    default:
-      return a.name.localeCompare(b.name)
-  }
-}
+
 
 // Mirrors GET /tenants's own in-memory filter/sort/paginate logic — used only
 // as a DEV-mode fallback (see getTenants()) when the backend isn't reachable.

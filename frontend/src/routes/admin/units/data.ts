@@ -23,21 +23,7 @@ export interface GetUnitsResult {
   pageSize: number
 }
 
-function compareUnits(a: Unit, b: Unit, sortBy: UnitSortField): number {
-  switch (sortBy) {
-    case 'sizeSqft':
-      return a.sizeSqft - b.sizeSqft
-    case 'monthlyRent':
-      return a.monthlyRent - b.monthlyRent
-    case 'floor':
-      return a.floor.localeCompare(b.floor, undefined, { numeric: true })
-    case 'status':
-      return a.status.localeCompare(b.status)
-    case 'unitNumber':
-    default:
-      return a.unitNumber.localeCompare(b.unitNumber, undefined, { numeric: true })
-  }
-}
+
 
 // Mirrors GET /units's own in-memory filter/sort/paginate logic — used only
 // as a DEV-mode fallback (see getUnits()) when the backend isn't reachable.

@@ -23,17 +23,7 @@ export interface GetRemindersResult {
 
 const statusRank: Record<ReminderStatus, number> = { scheduled: 0, sent: 1, failed: 2 }
 
-function compareReminders(a: Reminder, b: Reminder, sortBy: ReminderSortField): number {
-  switch (sortBy) {
-    case 'title':
-      return a.title.localeCompare(b.title)
-    case 'status':
-      return statusRank[a.status] - statusRank[b.status]
-    case 'scheduledFor':
-    default:
-      return a.scheduledFor.localeCompare(b.scheduledFor)
-  }
-}
+
 
 // Mirrors GET /reminders's own in-memory filter/sort/paginate logic — used
 // only as a DEV-mode fallback (see getReminders()) when the backend isn't

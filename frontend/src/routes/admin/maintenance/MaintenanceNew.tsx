@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Button, Card, Input, Text } from '../../../components'
+import { Button, Card, Input } from '../../../components'
 import { BackLink } from '../components/BackLink'
 import { PageHeader } from '../components/PageHeader'
 import { Select } from '../components/Select'

@@ -24,17 +24,7 @@ export interface GetMaintenanceRequestsResult {
 const priorityRank: Record<MaintenancePriority, number> = { low: 0, medium: 1, high: 2 }
 const statusRank: Record<MaintenanceStatus, number> = { open: 0, in_progress: 1, resolved: 2 }
 
-function compareMaintenanceRequests(a: MaintenanceRequest, b: MaintenanceRequest, sortBy: MaintenanceSortField): number {
-  switch (sortBy) {
-    case 'priority':
-      return priorityRank[a.priority] - priorityRank[b.priority]
-    case 'status':
-      return statusRank[a.status] - statusRank[b.status]
-    case 'createdAt':
-    default:
-      return a.createdAt.localeCompare(b.createdAt)
-  }
-}
+
 
 // Mirrors GET /maintenance's own in-memory filter/sort/paginate logic — used
 // only as a DEV-mode fallback (see getMaintenanceRequests()) when the
