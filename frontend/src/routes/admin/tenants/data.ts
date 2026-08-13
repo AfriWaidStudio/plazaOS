@@ -80,8 +80,7 @@ export interface AddTenantResult {
  * this never needs a separate `updateUnit()` call afterward.
  */
 export async function addTenant(input: AddTenantInput): Promise<AddTenantResult> {
-  try {
-    const result = await api.post<{ success: boolean; id: string; tempPassword: string }>('/tenants', input)
+  const result = await api.post<{ success: boolean; id: string; tempPassword: string }>('/tenants', input)
     return {
       tenant: {
         id: result.id,
@@ -99,12 +98,7 @@ export async function addTenant(input: AddTenantInput): Promise<AddTenantResult>
         mustChangePassword: true,
       },
       tempPassword: result.tempPassword,
-    }
-  } catch (err) {
-    if (!import.meta.env.DEV) throw err
-    const tempPassword = generateTempPassword()
-    const newTenant: Tenant = {
-      id: `tenant-${Date.now()}`,
+    }`,
       ...input,
       rentStatus: 'due',
       status: 'active',
@@ -139,19 +133,10 @@ export interface ResetPasswordResult {
 
 /** `POST /tenants/:tenantId/reset-password` — the new temp password is server-generated. */
 export async function resetTenantPassword(tenantId: string): Promise<ResetPasswordResult> {
-  try {
-    const result = await api.post<{ success: boolean; email: string; tempPassword: string }>(
+  const result = await api.post<{ success: boolean; email: string; tempPassword: string }>(
       `/tenants/${tenantId}/reset-password`,
     )
     return { email: result.email, tempPassword: result.tempPassword }
-  } catch (err) {
-    if (!import.meta.env.DEV) throw err
-    const tenant = mockTenants.find((existing) => existing.id === tenantId)
-    if (!tenant) throw err
-    const tempPassword = generateTempPassword()
-    tenant.accountStatus = 'temporary'
-    tenant.mustChangePassword = true
-    return { email: tenant.email, tempPassword }
   }
 }
 

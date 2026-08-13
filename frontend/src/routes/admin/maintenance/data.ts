@@ -21,8 +21,7 @@ export interface GetMaintenanceRequestsResult {
   pageSize: number
 }
 
-const priorityRank: Record<MaintenancePriority, number> = { low: 0, medium: 1, high: 2 }
-const statusRank: Record<MaintenanceStatus, number> = { open: 0, in_progress: 1, resolved: 2 }
+
 
 
 

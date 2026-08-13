@@ -21,7 +21,7 @@ export interface GetRemindersResult {
   pageSize: number
 }
 
-const statusRank: Record<ReminderStatus, number> = { scheduled: 0, sent: 1, failed: 2 }
+
 
 
 
@@ -64,8 +64,7 @@ export interface AddReminderInput {
 
 /** `POST /reminders` — always creates a `type: 'manual'` reminder server-side. */
 export async function addReminder(input: AddReminderInput): Promise<Reminder> {
-  try {
-    const result = await api.post<{ success: boolean; id: string; targetLabel: string }>('/reminders', input)
+  const result = await api.post<{ success: boolean; id: string; targetLabel: string }>('/reminders', input)
     return {
       id: result.id,
       title: input.title,
@@ -75,11 +74,7 @@ export async function addReminder(input: AddReminderInput): Promise<Reminder> {
       target: input.target,
       status: 'scheduled',
       targetLabel: result.targetLabel,
-    }
-  } catch (err) {
-    if (!import.meta.env.DEV) throw err
-    const newReminder: Reminder = {
-      id: `reminder-${Date.now()}`,
+    }`,
       title: input.title,
       message: input.message,
       scheduledFor: input.scheduledFor,

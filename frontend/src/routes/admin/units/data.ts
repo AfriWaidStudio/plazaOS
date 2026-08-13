@@ -70,12 +70,8 @@ export interface AddUnitInput {
 
 /** `POST /units`. */
 export async function addUnit(input: AddUnitInput): Promise<Unit> {
-  try {
-    const result = await api.post<{ success: boolean; id: string }>('/units', input)
-    return { id: result.id, ...input }
-  } catch (err) {
-    if (!import.meta.env.DEV) throw err
-    const newUnit: Unit = { id: `unit-${Date.now()}`, ...input }
+  const result = await api.post<{ success: boolean; id: string }>('/units', input)
+    return { id: result.id, ...input }`, ...input }
     mockUnits.push(newUnit)
     return newUnit
   }

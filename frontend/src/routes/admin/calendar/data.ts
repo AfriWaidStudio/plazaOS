@@ -58,7 +58,7 @@ export async function addCalendarEvent(input: AddCalendarEventInput): Promise<Ca
   } catch (err) {
     if (!import.meta.env.DEV) throw err
     const newEvent: CalendarEvent = { id: `event-${Date.now()}`, ...input }
-    mockCalendarEvents.push(newEvent)
+    
     return newEvent
   }
 }

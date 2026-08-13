@@ -25,7 +25,16 @@ const paymentStatusVariant: Record<PaymentStatus, 'success' | 'warning' | 'dange
 // (each fetched with a large pageSize, per §4's small-dataset allowance)
 // rather than a dedicated summary endpoint.
 export function AdminDashboard() {
-  const [stats, setStats] = useState<any>(null)
+  const [stats, setStats] = useState<{
+    totalUnits: number
+    occupiedUnits: number
+    vacantUnits: number
+    activeTenants: number
+    overdueTenants: number
+    openMaintenanceCount: number
+    recentPayments: Payment[]
+    upcomingEvents: CalendarEvent[]
+  } | null>(null)
 
   useEffect(() => {
     let cancelled = false
