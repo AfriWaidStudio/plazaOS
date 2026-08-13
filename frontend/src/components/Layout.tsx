@@ -20,6 +20,7 @@ const NAV_ITEMS: Record<Role, NavItem[]> = {
     { label: 'Reminders', to: '/admin/reminders' },
     { label: 'Calendar', to: '/admin/calendar' },
     { label: 'Notifications', to: '/admin/notifications' },
+    { label: 'Help & Q&A', to: '/admin/help' },
   ],
   tenant: [
     { label: 'Home', to: '/tenant' },

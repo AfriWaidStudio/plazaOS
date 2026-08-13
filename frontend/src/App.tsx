@@ -22,6 +22,7 @@ import { UnitDetail } from './routes/admin/units/UnitDetail'
 import { UnitNew } from './routes/admin/units/UnitNew'
 import { UnitsList } from './routes/admin/units/UnitsList'
 import { AdminProfile } from './routes/admin/Profile'
+import { AdminHelp } from './routes/admin/help/AdminHelp'
 import { DevKit } from './routes/dev/DevKit'
 import { Login } from './routes/Login'
 import { ProtectedRoute } from './routes/ProtectedRoute'
@@ -82,6 +83,7 @@ function App() {
           <Route path="reminders/new" element={<ReminderNew />} />
           <Route path="reminders/:reminderId" element={<ReminderDetail />} />
           <Route path="notifications" element={<AdminNotifications />} />
+          <Route path="help" element={<AdminHelp />} />
         </Route>
 
         <Route
