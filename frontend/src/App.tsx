@@ -35,10 +35,12 @@ import { MaintenanceNew } from './routes/tenant/MaintenanceNew'
 import { Announcements } from './routes/tenant/Announcements'
 import { Notifications } from './routes/tenant/Notifications'
 import { Calendar } from './routes/tenant/Calendar'
+import { PwaInstallPrompt } from './components/PwaInstallPrompt'
 
 function App() {
   return (
     <AuthProvider>
+      <PwaInstallPrompt />
       <Routes>
         <Route path="/login" element={<Login />} />
 
