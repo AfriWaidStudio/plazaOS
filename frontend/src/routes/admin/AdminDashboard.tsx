@@ -2,12 +2,8 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Card, StatusBadge, Text } from '../../components'
 import { PageHeader } from './components/PageHeader'
-import { getCalendarEvents } from './calendar/data'
-import { getMaintenanceRequests } from './maintenance/data'
-import { getPayments } from './payments/data'
-import { getUnits } from './units/data'
 import { api } from '../../lib/api'
-import type { CalendarEvent, Payment, PaymentStatus, Tenant, Unit } from './data/types'
+import type { CalendarEvent, Payment, PaymentStatus } from './data/types'
 
 const paymentStatusLabel: Record<PaymentStatus, string> = {
   paid: 'Paid',
@@ -40,7 +36,7 @@ export function AdminDashboard() {
     let cancelled = false
     api.get('/admin/dashboard-stats').then((data) => {
       if (cancelled) return
-      setStats(data)
+      setStats(data as any)
     })
     return () => {
       cancelled = true

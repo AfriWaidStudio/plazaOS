@@ -12,6 +12,6 @@ export interface Announcement {
 
 export const announcementService = {
   async list(page = 1, pageSize = DEFAULT_PAGE_SIZE): Promise<{ data: Announcement[]; total: number }> {
-    
+    return api.get(`/tenant/announcements?page=${page}&pageSize=${pageSize}`);
   },
 }

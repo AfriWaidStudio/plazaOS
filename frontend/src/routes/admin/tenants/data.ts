@@ -81,32 +81,23 @@ export interface AddTenantResult {
  */
 export async function addTenant(input: AddTenantInput): Promise<AddTenantResult> {
   const result = await api.post<{ success: boolean; id: string; tempPassword: string }>('/tenants', input)
-    return {
-      tenant: {
-        id: result.id,
-        name: input.name,
-        email: input.email,
-        phone: input.phone,
-        unitId: input.unitId,
-        unitNumber: input.unitNumber,
-        leaseStart: input.leaseStart,
-        leaseEnd: input.leaseEnd,
-        monthlyRent: input.monthlyRent,
-        rentStatus: 'due',
-        status: 'active',
-        accountStatus: 'temporary',
-        mustChangePassword: true,
-      },
-      tempPassword: result.tempPassword,
-    }`,
-      ...input,
+  return {
+    tenant: {
+      id: result.id,
+      name: input.name,
+      email: input.email,
+      phone: input.phone,
+      unitId: input.unitId,
+      unitNumber: input.unitNumber,
+      leaseStart: input.leaseStart,
+      leaseEnd: input.leaseEnd,
+      monthlyRent: input.monthlyRent,
       rentStatus: 'due',
       status: 'active',
       accountStatus: 'temporary',
       mustChangePassword: true,
-    }
-    mockTenants.push(newTenant)
-    return { tenant: newTenant, tempPassword }
+    },
+    tempPassword: result.tempPassword,
   }
 }
 
@@ -136,14 +127,13 @@ export async function resetTenantPassword(tenantId: string): Promise<ResetPasswo
   const result = await api.post<{ success: boolean; email: string; tempPassword: string }>(
       `/tenants/${tenantId}/reset-password`,
     )
-    return { email: result.email, tempPassword: result.tempPassword }
-  }
+  return { email: result.email, tempPassword: result.tempPassword }
 }
 
 const TEMP_PASSWORD_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789' // omits 0/O/1/l/I to avoid ambiguity
 
 /** DEV-only fallback generator — the real backend always generates/hashes this server-side. */
-function generateTempPassword(length = 8): string {
+export function generateTempPassword(length = 8): string {
   let password = ''
   for (let i = 0; i < length; i += 1) {
     password += TEMP_PASSWORD_CHARS[Math.floor(Math.random() * TEMP_PASSWORD_CHARS.length)]

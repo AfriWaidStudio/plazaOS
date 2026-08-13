@@ -87,9 +87,5 @@ export interface AddPaymentInput {
 /** `POST /payments` — records an offline payment and settles the linked rent charge. */
 export async function addPayment(input: AddPaymentInput): Promise<Payment> {
   const result = await api.post<{ success: boolean; id: string }>('/payments', input)
-    return { id: result.id, receiptAvailable: input.status === 'paid', ...input }`, receiptAvailable: input.status === 'paid', ...input }
-    mockPayments.push(newPayment)
-    return newPayment
-  }
+  return { id: result.id, receiptAvailable: input.status === 'paid', ...input }
 }
-

@@ -13,14 +13,14 @@ export interface NotificationItem {
 
 export const notificationService = {
   async list(): Promise<NotificationItem[]> {
-    
+    return api.get(`/tenant/notifications`);
   },
 
   async markRead(id: string) {
-    
+    return api.patch(`/tenant/notifications/${id}/read`);
   },
 
   async markAllRead() {
-    
+    return api.patch(`/tenant/notifications/read-all`);
   },
 }

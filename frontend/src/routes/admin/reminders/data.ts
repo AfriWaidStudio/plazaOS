@@ -65,27 +65,14 @@ export interface AddReminderInput {
 /** `POST /reminders` — always creates a `type: 'manual'` reminder server-side. */
 export async function addReminder(input: AddReminderInput): Promise<Reminder> {
   const result = await api.post<{ success: boolean; id: string; targetLabel: string }>('/reminders', input)
-    return {
-      id: result.id,
-      title: input.title,
-      message: input.message,
-      scheduledFor: input.scheduledFor,
-      type: 'manual',
-      target: input.target,
-      status: 'scheduled',
-      targetLabel: result.targetLabel,
-    }`,
-      title: input.title,
-      message: input.message,
-      scheduledFor: input.scheduledFor,
-      type: 'manual',
-      target: input.target,
-      status: 'scheduled',
-      targetLabel:
-        input.target === 'everyone' ? 'All tenants' : input.target === 'group' ? `${input.groupTenantIds?.length ?? 0} tenants` : 'Tenant',
-    }
-    mockReminders.push(newReminder)
-    return newReminder
+  return {
+    id: result.id,
+    title: input.title,
+    message: input.message,
+    scheduledFor: input.scheduledFor,
+    type: 'manual',
+    target: input.target,
+    status: 'scheduled',
+    targetLabel: result.targetLabel,
   }
 }
-

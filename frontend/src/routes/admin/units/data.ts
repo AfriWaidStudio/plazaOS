@@ -71,12 +71,8 @@ export interface AddUnitInput {
 /** `POST /units`. */
 export async function addUnit(input: AddUnitInput): Promise<Unit> {
   const result = await api.post<{ success: boolean; id: string }>('/units', input)
-    return { id: result.id, ...input }`, ...input }
-    mockUnits.push(newUnit)
-    return newUnit
-  }
+  return { id: result.id, ...input }
 }
-
 export interface UpdateUnitInput {
   floor?: string
   sizeSqft?: number
