@@ -42,22 +42,44 @@ export function Layout() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-slate-200/20">
-      {/* Mobile Top Header - visible only on mobile */}
-      <div className="md:hidden flex items-center justify-between bg-white border-b border-slate-200 p-4">
+    <div className="flex min-h-screen bg-slate-200/20 flex-col md:flex-row">
+      {/* Mobile Top Header */}
+      <div className="md:hidden flex items-center justify-between bg-white border-b border-slate-200 p-4 sticky top-0 z-30">
         <Text variant="h2" className="text-primary">
           Plaza OS
         </Text>
-        <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 text-slate-600 focus:outline-none">
-          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        <button onClick={() => setIsMobileMenuOpen(true)} className="p-2 text-slate-600 focus:outline-none">
+          <Menu size={24} />
         </button>
       </div>
 
-      <aside className={`${isMobileMenuOpen ? 'flex' : 'hidden'} md:flex w-full md:w-60 flex-col border-b md:border-b-0 md:border-r border-slate-200 bg-white p-4`}>
-        <Text variant="h2" className="mb-6 text-primary hidden md:block">
-          Plaza OS
-        </Text>
-        <nav className="flex flex-1 flex-col gap-1">
+      {/* Mobile Overlay Backdrop */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 z-40 bg-slate-900/50 md:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Sidebar Drawer */}
+      <aside 
+        className={`fixed inset-y-0 left-0 z-50 w-64 transform bg-white transition-transform duration-200 ease-in-out md:static md:w-60 md:translate-x-0 ${
+          isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+        } flex flex-col border-r border-slate-200 p-4`}
+      >
+        <div className="flex items-center justify-between mb-6">
+          <Text variant="h2" className="text-primary">
+            Plaza OS
+          </Text>
+          <button 
+            className="md:hidden p-2 text-slate-600 focus:outline-none"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            <X size={24} />
+          </button>
+        </div>
+
+        <nav className="flex flex-1 flex-col gap-1 overflow-y-auto">
           {navItems.map((item) => (
             <NavLink
               key={item.to}
@@ -80,8 +102,10 @@ export function Layout() {
           </Text>
         </div>
       </aside>
-      <div className="flex flex-1 flex-col overflow-hidden">
-        <header className="flex min-h-[44px] items-center justify-between border-b border-slate-200 bg-white px-6 py-3">
+
+      {/* Main Content Area */}
+      <div className="flex flex-1 flex-col min-w-0">
+        <header className="flex min-h-[44px] items-center justify-between border-b border-slate-200 bg-white px-4 md:px-6 py-3">
           <Text variant="body" className="text-slate-500 truncate mr-4">
             {user?.name} · <span className="capitalize">{role}</span>
           </Text>
@@ -89,7 +113,7 @@ export function Layout() {
             Log out
           </Button>
         </header>
-        <main className="flex-1 p-4 md:p-6 overflow-y-auto">
+        <main className="flex-1 p-4 md:p-6 overflow-x-hidden">
           <Outlet />
         </main>
       </div>
