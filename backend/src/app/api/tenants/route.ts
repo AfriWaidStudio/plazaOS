@@ -7,6 +7,7 @@ import { Unit } from '@/models/Unit'
 import { Lease } from '@/models/Lease'
 import { RentCharge } from '@/models/RentCharge'
 import { ApiError } from '@/lib/api-error'
+import { calculateNextRentPeriod } from '@/lib/rent-generation'
 import { generateTempPassword, hashPassword } from '@/lib/password'
 import { sendEmail } from '@/lib/email'
 import { escapeRegex, parsePageParams } from '@/lib/list-query'
@@ -210,6 +211,23 @@ export const POST = withErrorHandling(async (request: NextRequest) => {
             rentAmount: parsed.data.monthlyRent,
             rentDueDay: rentDueDayFrom(parsed.data.leaseStart),
             status: 'active',
+          },
+        ],
+        { session },
+      )
+
+      // Create the first RentCharge for this lease immediately so the tenant can be billed.
+      const { period, dueDate } = calculateNextRentPeriod(lease.startDate, lease.rentDueDay)
+      await RentCharge.create(
+        [
+          {
+            tenantId: tenant._id,
+            unitId: unit._id,
+            leaseId: lease._id,
+            period,
+            amount: lease.rentAmount,
+            dueDate,
+            status: new Date(dueDate) <= new Date() ? 'due' : 'upcoming',
           },
         ],
         { session },
