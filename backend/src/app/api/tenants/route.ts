@@ -162,8 +162,21 @@ export const POST = withErrorHandling(async (request: NextRequest) => {
   const email = parsed.data.email.toLowerCase()
 
   // MongoDB requires collections to exist before they can be modified in a multi-document transaction.
-  // Since RentCharge is a new collection, ensure it exists.
-  await RentCharge.createCollection().catch(() => {})
+  // Since RentCharge is a new collection, ensure it exists by performing an implicit insert (and immediate delete)
+  // outside the transaction. This avoids 'dbAdmin' permission requirements for explicit createCollection.
+  const collections = await mongoose.connection.db?.listCollections({ name: 'rentcharges' }).toArray()
+  if (collections && collections.length === 0) {
+    const dummy = await RentCharge.create({
+      tenantId: new mongoose.Types.ObjectId(),
+      unitId: new mongoose.Types.ObjectId(),
+      leaseId: new mongoose.Types.ObjectId(),
+      period: '0000-00',
+      amount: 1,
+      dueDate: '2000-01-01',
+      status: 'upcoming'
+    })
+    await RentCharge.deleteOne({ _id: dummy._id })
+  }
 
   const session = await mongoose.startSession()
   let created: { tenantId: string; unitId: string; unitNumber: string; leaseId: string; tempPassword: string } | undefined
