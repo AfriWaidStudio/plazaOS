@@ -134,6 +134,7 @@ const createTenantSchema = z
     email: z.string().email(),
     phone: z.string().min(1),
     unitId: z.string().min(1),
+    unitNumber: z.string().optional(),
     leaseStart: z.string().min(1),
     leaseEnd: z.string().min(1),
     monthlyRent: z.number().positive(),
