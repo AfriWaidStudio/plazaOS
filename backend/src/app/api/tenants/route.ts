@@ -161,6 +161,10 @@ export const POST = withErrorHandling(async (request: NextRequest) => {
   await dbConnect()
   const email = parsed.data.email.toLowerCase()
 
+  // MongoDB requires collections to exist before they can be modified in a multi-document transaction.
+  // Since RentCharge is a new collection, ensure it exists.
+  await RentCharge.createCollection().catch(() => {})
+
   const session = await mongoose.startSession()
   let created: { tenantId: string; unitId: string; unitNumber: string; leaseId: string; tempPassword: string } | undefined
 
