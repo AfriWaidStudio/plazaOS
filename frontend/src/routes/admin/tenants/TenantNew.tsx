@@ -31,6 +31,7 @@ export function TenantNew() {
   const [leaseEnd, setLeaseEnd] = useState('')
   const [monthlyRent, setMonthlyRent] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [created, setCreated] = useState<CreatedTenant | null>(null)
 
   useEffect(() => {
@@ -63,6 +64,7 @@ export function TenantNew() {
     if (!selectedUnit) return
 
     setIsSubmitting(true)
+    setError(null)
     try {
       const result = await addTenant({
         name,
@@ -75,6 +77,8 @@ export function TenantNew() {
         monthlyRent: Number(monthlyRent),
       })
       setCreated(result)
+    } catch (err: any) {
+      setError(err.message || 'An error occurred while creating the tenant.')
     } finally {
       setIsSubmitting(false)
     }
@@ -121,6 +125,18 @@ export function TenantNew() {
       <PageHeader title="Add tenant" description="Create a tenant account and assign them to a vacant unit." />
       <Card className="max-w-lg">
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          {error && (
+            <div className="rounded-md bg-red-50 p-4 mb-2">
+              <div className="flex">
+                <div className="ml-3">
+                  <h3 className="text-sm font-medium text-red-800">Error</h3>
+                  <div className="mt-2 text-sm text-red-700">
+                    <p>{error}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
           <Input label="Name" value={name} onChange={(event) => setName(event.target.value)} required />
           <Input label="Email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} required />
           <Input label="Phone" value={phone} onChange={(event) => setPhone(event.target.value)} required />
