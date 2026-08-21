@@ -1,0 +1,49 @@
+services:
+  - type: web
+    name: plazaos-backend
+    env: node
+    rootDir: backend
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGIN
+        sync: false
+      - key: PAYSTACK_SECRET_KEY
+        sync: false
+      - key: CRON_SECRET
+        generateValue: true
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: RESEND_FROM_EMAIL
+        sync: false
+
+  - type: cron
+    name: plazaos-reminders-cron
+    env: node
+    rootDir: backend
+    schedule: "0 * * * *"
+    buildCommand: npm install
+    startCommand: npm run cron
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: CRON_SECRET
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: RESEND_FROM_EMAIL
+        sync: false
