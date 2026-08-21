@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { z } from 'zod'
 import { dbConnect } from '@/lib/db'
 import { MaintenanceRequest } from '@/models/MaintenanceRequest'
+import { User } from '@/models/User'
 import { ApiError } from '@/lib/api-error'
 import { escapeRegex, parsePageParams } from '@/lib/list-query'
 import { withErrorHandling, requireRole, OPTIONS as corsOptions } from '@/lib/route-handler'
@@ -60,4 +62,33 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
   ])
 
   return NextResponse.json({ data: docs.map(toPublicRequest), total, page, pageSize })
+})
+
+const createMaintenanceSchema = z.object({
+  tenantId: z.string().min(1),
+  title: z.string().trim().min(1),
+  description: z.string().trim().min(1),
+  priority: z.enum(['low', 'medium', 'high']).optional(),
+}).strict()
+
+export const POST = withErrorHandling(async (request: NextRequest) => {
+  requireRole(request, 'admin')
+  const parsed = createMaintenanceSchema.safeParse(await request.json().catch(() => null))
+  if (!parsed.success) throw new ApiError('Tenant, title, and description are required', 400)
+
+  await dbConnect()
+  const tenant = await User.findOne({ _id: parsed.data.tenantId, role: 'tenant' }).catch(() => null)
+  if (!tenant) throw new ApiError('Tenant not found', 404)
+
+  const doc = await MaintenanceRequest.create({
+    tenantId: tenant._id,
+    tenantName: tenant.name,
+    unitId: tenant.unitId,
+    unitNumber: tenant.unitNumber ?? 'unassigned',
+    title: parsed.data.title,
+    description: parsed.data.description,
+    priority: parsed.data.priority ?? 'medium',
+  })
+
+  return NextResponse.json(toPublicRequest(doc), { status: 201 })
 })

@@ -94,6 +94,40 @@ export async function getMaintenanceRequestsByTenant(tenantId: string): Promise<
   return data.filter((request) => request.tenantId === tenantId)
 }
 
+export interface AddMaintenanceRequestInput {
+  tenantId: string
+  title: string
+  description: string
+  priority?: MaintenancePriority
+}
+
+/** `POST /maintenance`. */
+export async function addMaintenanceRequest(input: AddMaintenanceRequestInput): Promise<MaintenanceRequest> {
+  try {
+    return await api.post<MaintenanceRequest>('/maintenance', input)
+  } catch (err) {
+    if (!import.meta.env.DEV) throw err
+    const tenantName = 'Selected tenant'
+    const request: MaintenanceRequest = {
+      id: `m-${Date.now()}`,
+      tenantId: input.tenantId,
+      tenantName,
+      unitId: '',
+      unitNumber: 'unassigned',
+      title: input.title,
+      description: input.description,
+      status: 'open',
+      priority: input.priority ?? 'medium',
+      images: [],
+      notes: '',
+      createdAt: new Date().toISOString().slice(0, 10),
+      resolvedAt: null,
+    }
+    mockMaintenanceRequests.unshift(request)
+    return request
+  }
+}
+
 /** `GET /maintenance/:requestId`. */
 export async function getMaintenanceRequest(requestId: string): Promise<MaintenanceRequest | undefined> {
   try {
