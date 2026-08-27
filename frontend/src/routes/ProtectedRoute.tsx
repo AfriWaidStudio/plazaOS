@@ -8,7 +8,7 @@ interface ProtectedRouteProps {
   children: ReactNode
 }
 
-const TENANT_SET_PASSWORD_PATH = '/tenant/set-password'
+const TENANT_SET_PASSWORD_PATH = '/tenant/account-setup'
 
 /**
  * Unauthenticated users are sent to /login. Authenticated users whose role

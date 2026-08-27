@@ -28,7 +28,6 @@ import { Landing } from './routes/Landing'
 import { Login } from './routes/Login'
 import { ProtectedRoute } from './routes/ProtectedRoute'
 import { ResetPassword } from './routes/ResetPassword'
-import { SetPassword } from './routes/tenant/SetPassword'
 import { AccountSetup } from './routes/tenant/AccountSetup'
 import { TenantSetupGuard } from './routes/tenant/TenantSetupGuard'
 import { TenantHome } from './routes/tenant/TenantHome'
@@ -130,7 +129,6 @@ function AppRoutes() {
       >
         <Route index element={<Navigate to="dashboard" replace />} />
         <Route path="dashboard" element={<TenantHome />} />
-        <Route path="set-password" element={<SetPassword />} />
         <Route path="profile" element={<Profile />} />
         <Route path="payments" element={<Payments />} />
         <Route path="payments/new" element={<PaymentsNew />} />
