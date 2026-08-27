@@ -100,7 +100,9 @@ function SidebarContent({ navItems, role, userName, onLogout, onNavigate, onClos
 
       <div className="mt-4 border-t border-slate-200 pt-4">
         <p className="truncate text-[15px] text-slate-900">{userName}</p>
-        <p className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-slate-500">{role}</p>
+        {role && userName?.toLowerCase() !== role.toLowerCase() && (
+          <p className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-slate-500">{role}</p>
+        )}
         <button
           type="button"
           onClick={onLogout}

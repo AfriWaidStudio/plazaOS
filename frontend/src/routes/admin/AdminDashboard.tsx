@@ -30,9 +30,13 @@ export function AdminDashboard() {
   const [openMaintenanceCount, setOpenMaintenanceCount] = useState(0)
   const [recentPayments, setRecentPayments] = useState<Payment[]>([])
   const [upcomingEvents, setUpcomingEvents] = useState<CalendarEvent[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     let cancelled = false
+    setIsLoading(true)
+    setError(null)
     Promise.all([
       getUnits({ pageSize: 1000 }),
       getTenants({ pageSize: 1000 }),
@@ -45,7 +49,18 @@ export function AdminDashboard() {
       setTenants(tenantsResult.data)
       setOpenMaintenanceCount(maintenanceResult.total)
       setRecentPayments(paymentsResult.data)
-      setUpcomingEvents(calendarResult.data)
+      setUpcomingEvents(calendarResult.data || [])
+    })
+    .catch((err) => {
+      if (!cancelled) {
+        console.error('Dashboard data fetch failed:', err)
+        setError('Failed to load dashboard data.')
+      }
+    })
+    .finally(() => {
+      if (!cancelled) {
+        setIsLoading(false)
+      }
     })
     return () => {
       cancelled = true
@@ -57,6 +72,28 @@ export function AdminDashboard() {
   const vacantUnits = units.filter((unit) => unit.status === 'vacant').length
   const overdueTenants = tenants.filter((tenant) => tenant.rentStatus === 'overdue').length
   const activeTenants = tenants.filter((tenant) => tenant.status === 'active').length
+
+  if (isLoading) {
+    return (
+      <div>
+        <PageHeader title="Dashboard" description="Plaza overview at a glance." />
+        <Card className="mt-4">
+          <Text variant="body">Loading dashboard data...</Text>
+        </Card>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div>
+        <PageHeader title="Dashboard" description="Plaza overview at a glance." />
+        <Card className="mt-4">
+          <Text variant="body" className="text-danger">{error}</Text>
+        </Card>
+      </div>
+    )
+  }
 
   return (
 
