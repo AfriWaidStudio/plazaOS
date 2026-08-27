@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { dbConnect } from '@/lib/db'
 import { MaintenanceRequest } from '@/models/MaintenanceRequest'
+import { User } from '@/models/User'
 import { ApiError } from '@/lib/api-error'
 import { withErrorHandling, requireRole, OPTIONS as corsOptions } from '@/lib/route-handler'
 
