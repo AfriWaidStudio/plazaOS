@@ -7,7 +7,7 @@ import { PageHeader } from '../components/PageHeader'
 import { Select } from '../components/Select'
 import { Textarea } from '../components/Textarea'
 import type { MaintenancePriority, MaintenanceRequest, MaintenanceStatus } from '../data/types'
-import { getMaintenanceRequest, updateMaintenanceRequest } from './data'
+import { getMaintenanceRequest, updateMaintenanceRequest, addMaintenanceComment } from './data'
 
 const statusLabel: Record<MaintenanceStatus, string> = {
   open: 'Open',
@@ -50,6 +50,8 @@ export function MaintenanceDetail() {
   const [notes, setNotes] = useState('')
   const [resolvedAt, setResolvedAt] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
+  const [commentText, setCommentText] = useState('')
+  const [isSendingComment, setIsSendingComment] = useState(false)
 
   useEffect(() => {
     if (!requestId) return
@@ -119,6 +121,24 @@ export function MaintenanceDetail() {
       if (updated) setRequest(updated)
     } finally {
       setIsSaving(false)
+    }
+  }
+
+  async function handleAddComment() {
+    if (!commentText.trim() || !currentRequest.id) return
+    setIsSendingComment(true)
+    try {
+      const newComment = await addMaintenanceComment(currentRequest.id, commentText)
+      setRequest((prev) => {
+        if (!prev) return prev
+        return {
+          ...prev,
+          comments: [...(prev.comments || []), newComment]
+        }
+      })
+      setCommentText('')
+    } finally {
+      setIsSendingComment(false)
     }
   }
 
@@ -200,6 +220,47 @@ export function MaintenanceDetail() {
           <Button onClick={handleSave} disabled={isSaving || !hasChanges}>
             {isSaving ? 'Saving…' : 'Save changes'}
           </Button>
+        </div>
+      </Card>
+
+      <Card className="mt-6 max-w-2xl flex flex-col gap-4">
+        <Text variant="h3">Messages</Text>
+        <div className="flex flex-col gap-4">
+          {(!currentRequest.comments || currentRequest.comments.length === 0) ? (
+            <Text variant="bodySmall" className="text-slate-500">No messages yet.</Text>
+          ) : (
+            currentRequest.comments.map((comment: any) => (
+              <div
+                key={comment.id}
+                className={`flex flex-col gap-1 rounded-card p-4 ${
+                  comment.role === 'admin' ? 'bg-primary/5 ml-8 border border-primary/10' : 'bg-slate-50 mr-8 border border-slate-200'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <Text variant="bodySmall" className="font-medium">
+                    {comment.authorName} {comment.role === 'tenant' && <span className="text-slate-500 ml-1">(Tenant)</span>}
+                  </Text>
+                  <Text variant="bodySmall" className="text-slate-500">
+                    {new Date(comment.createdAt).toLocaleDateString()}
+                  </Text>
+                </div>
+                <Text variant="body" className="whitespace-pre-wrap">{comment.content}</Text>
+              </div>
+            ))
+          )}
+        </div>
+        <div className="mt-4 flex flex-col gap-3 border-t border-slate-200 pt-4">
+          <Textarea
+            placeholder="Type a message to the tenant..."
+            value={commentText}
+            onChange={(e) => setCommentText(e.target.value)}
+            disabled={isSendingComment}
+          />
+          <div className="flex justify-end">
+            <Button onClick={handleAddComment} disabled={!commentText.trim() || isSendingComment}>
+              {isSendingComment ? 'Sending...' : 'Send Message'}
+            </Button>
+          </div>
         </div>
       </Card>
     </div>

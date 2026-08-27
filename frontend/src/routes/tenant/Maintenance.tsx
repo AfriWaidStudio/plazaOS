@@ -73,7 +73,12 @@ export function Maintenance() {
             </div>
           </div>
         ) : (
-          <Table columns={columns} data={filtered} getRowKey={(r) => r.id} />
+          <Table 
+            columns={columns} 
+            data={filtered} 
+            getRowKey={(r) => r.id}
+            onRowClick={(row) => navigate(`/tenant/maintenance/${row.id}`)}
+          />
         )}
         <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-wrap gap-2">

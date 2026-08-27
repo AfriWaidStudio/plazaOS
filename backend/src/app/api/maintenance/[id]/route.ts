@@ -22,6 +22,14 @@ function toPublicRequest(doc: any) {
     notes: doc.notes ?? '',
     createdAt: doc.createdAt.toISOString().slice(0, 10),
     resolvedAt: doc.resolvedAt ?? null,
+    comments: doc.comments?.map((c: any) => ({
+      id: c._id.toString(),
+      authorId: c.authorId.toString(),
+      authorName: c.authorName,
+      role: c.role,
+      content: c.content,
+      createdAt: c.createdAt.toISOString(),
+    })) || [],
   }
 }
 
@@ -58,6 +66,7 @@ export const PATCH = withErrorHandling(async (request: NextRequest, { params }: 
   const doc = await MaintenanceRequest.findById(id).catch(() => null)
   if (!doc) throw new ApiError('Maintenance request not found', 404)
 
+  const hasChanges = parsed.data.status !== undefined || parsed.data.priority !== undefined;
   if (parsed.data.status !== undefined) doc.status = parsed.data.status
   if (parsed.data.priority !== undefined) doc.priority = parsed.data.priority
   if (parsed.data.notes !== undefined) doc.notes = parsed.data.notes
@@ -67,6 +76,26 @@ export const PATCH = withErrorHandling(async (request: NextRequest, { params }: 
     doc.resolvedAt = new Date().toISOString().slice(0, 10)
   }
   await doc.save()
+
+  if (hasChanges) {
+    const tenant = await User.findById(doc.tenantId).catch(() => null)
+    if (tenant) {
+      const { sendEmail } = await import('@/lib/email')
+      sendEmail({
+        to: tenant.email,
+        subject: `Update on Maintenance Request: ${doc.title}`,
+        html: `
+          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>Ticket Updated</h2>
+            <p>Your maintenance request <strong>${doc.title}</strong> has been updated.</p>
+            <p><strong>New Status:</strong> ${doc.status}</p>
+            <p><strong>Priority:</strong> ${doc.priority}</p>
+            <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://plaza-os-kappa.vercel.app'}/tenant/maintenance/${doc._id}" style="display: inline-block; padding: 12px 24px; background-color: #3b82f6; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; margin-top: 16px;">View Ticket in PlazaOS</a>
+          </div>
+        `
+      }).catch(console.error)
+    }
+  }
 
   return NextResponse.json(toPublicRequest(doc))
 })

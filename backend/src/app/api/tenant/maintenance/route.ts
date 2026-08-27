@@ -5,6 +5,7 @@ import { MaintenanceRequest } from '@/models/MaintenanceRequest'
 import { User } from '@/models/User'
 import { ApiError } from '@/lib/api-error'
 import { saveMaintenanceImages } from '@/lib/uploads'
+import { sendEmail } from '@/lib/email'
 import { withErrorHandling, requireRole, OPTIONS as corsOptions } from '@/lib/route-handler'
 
 export { corsOptions as OPTIONS }
@@ -88,6 +89,21 @@ export const POST = withErrorHandling(async (request: NextRequest) => {
     category: parsed.data.category,
     images,
   })
+
+  sendEmail({
+    to: process.env.ADMIN_EMAIL || 'admin@plaza.test',
+    subject: `New Maintenance Request: ${parsed.data.title}`,
+    html: `
+      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2>New Maintenance Request</h2>
+        <p><strong>Tenant:</strong> ${user.name} (Unit ${user.unitNumber})</p>
+        <p><strong>Priority:</strong> ${parsed.data.priority || 'medium'}</p>
+        <p><strong>Title:</strong> ${parsed.data.title}</p>
+        <p><strong>Description:</strong> ${parsed.data.description || 'No description provided.'}</p>
+        <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://plaza-os-kappa.vercel.app'}/admin/maintenance/${doc._id}" style="display: inline-block; padding: 12px 24px; background-color: #3b82f6; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; margin-top: 16px;">View Ticket in PlazaOS</a>
+      </div>
+    `
+  }).catch(console.error)
 
   return NextResponse.json({ success: true, id: doc._id.toString() })
 })

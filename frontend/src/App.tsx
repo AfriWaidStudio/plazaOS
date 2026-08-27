@@ -37,6 +37,7 @@ import { Payments } from './routes/tenant/Payments'
 import { PaymentsNew } from './routes/tenant/PaymentsNew'
 import { Maintenance } from './routes/tenant/Maintenance'
 import { MaintenanceNew } from './routes/tenant/MaintenanceNew'
+import { MaintenanceDetail as TenantMaintenanceDetail } from './routes/tenant/MaintenanceDetail'
 import { Announcements } from './routes/tenant/Announcements'
 import { Notifications } from './routes/tenant/Notifications'
 import { Calendar } from './routes/tenant/Calendar'
@@ -135,6 +136,7 @@ function AppRoutes() {
         <Route path="payments/new" element={<PaymentsNew />} />
         <Route path="maintenance" element={<Maintenance />} />
         <Route path="maintenance/new" element={<MaintenanceNew />} />
+        <Route path="maintenance/:requestId" element={<TenantMaintenanceDetail />} />
         <Route path="announcements" element={<Announcements />} />
         <Route path="notifications" element={<Notifications />} />
         <Route path="calendar" element={<Calendar />} />

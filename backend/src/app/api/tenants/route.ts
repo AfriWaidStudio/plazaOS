@@ -9,6 +9,7 @@ import { RentCharge } from '@/models/RentCharge'
 import { ApiError } from '@/lib/api-error'
 import { generateTempPassword, hashPassword } from '@/lib/password'
 import { escapeRegex, parsePageParams } from '@/lib/list-query'
+import { sendEmail } from '@/lib/email'
 import { withErrorHandling, requireRole, OPTIONS as corsOptions } from '@/lib/route-handler'
 
 export { corsOptions as OPTIONS }
@@ -227,6 +228,24 @@ export const POST = withErrorHandling(async (request: NextRequest) => {
   }
 
   if (!created) throw new ApiError('Failed to create tenant', 500)
+
+  // Fire-and-forget email delivery
+  sendEmail({
+    to: email,
+    subject: 'Welcome to PlazaOS - Account Setup',
+    html: `
+      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2>Welcome to PlazaOS, ${parsed.data.name}!</h2>
+        <p>Your tenant account has been created for Unit ${created.unitNumber}.</p>
+        <p>You can log in to your tenant dashboard using this email and your temporary password:</p>
+        <div style="background-color: #f3f4f6; padding: 12px; border-radius: 6px; font-family: monospace; font-size: 18px; text-align: center; margin: 16px 0;">
+          <strong>${created.tempPassword}</strong>
+        </div>
+        <p>You will be prompted to change this password immediately upon your first login.</p>
+        <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://plaza-os-kappa.vercel.app'}" style="display: inline-block; padding: 12px 24px; background-color: #3b82f6; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; margin-top: 16px;">Log in to PlazaOS</a>
+      </div>
+    `
+  }).catch(console.error)
 
   // Plaintext temp password is returned exactly once here and never logged or
   // stored — see BACKEND_BUILD_PLAN.md §2/§13 ("Temp password delivery").

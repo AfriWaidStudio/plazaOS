@@ -65,10 +65,10 @@ export interface UpdateMaintenanceRequestInput {
 }
 
 /** `PATCH /maintenance/:requestId`. */
-export async function updateMaintenanceRequest(
-  requestId: string,
-  updates: UpdateMaintenanceRequestInput,
-): Promise<MaintenanceRequest | undefined> {
-    return await api.patch<MaintenanceRequest>(`/maintenance/${requestId}`, updates)
+export async function updateMaintenanceRequest(id: string, updates: Partial<MaintenanceRequest>): Promise<MaintenanceRequest | null> {
+  return await api.patch(`/maintenance/${id}`, updates).catch(() => null)
 }
 
+export async function addMaintenanceComment(id: string, content: string): Promise<any> {
+  return await api.post(`/maintenance/${id}/comments`, { content })
+}

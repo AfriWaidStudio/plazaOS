@@ -13,6 +13,15 @@ const maintenanceRequestSchema = new Schema(
     priority: { type: String, enum: ['low', 'medium', 'high'], required: true, default: 'medium' },
     // Cloudinary is the storage backend — only the URL/public id lives here, never raw image bytes.
     images: [{ url: { type: String, required: true }, publicId: { type: String, required: true }, _id: false }],
+    comments: [
+      {
+        authorId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+        authorName: { type: String, required: true },
+        role: { type: String, enum: ['admin', 'tenant'], required: true },
+        content: { type: String, required: true },
+        createdAt: { type: Date, default: Date.now },
+      },
+    ],
     notes: { type: String, default: '' },
     resolvedAt: { type: String, default: null },
   },
