@@ -81,7 +81,8 @@ export interface AddTenantResult {
  * this never needs a separate `updateUnit()` call afterward.
  */
 export async function addTenant(input: AddTenantInput): Promise<AddTenantResult> {
-    const result = await api.post<{ success: boolean; id: string; tempPassword: string }>('/tenants', input)
+    const { unitNumber, ...payload } = input
+    const result = await api.post<{ success: boolean; id: string; tempPassword: string; unitNumber: string }>('/tenants', payload)
     return {
       tenant: {
         id: result.id,
