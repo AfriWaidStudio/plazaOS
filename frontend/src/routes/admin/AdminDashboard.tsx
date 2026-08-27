@@ -2,12 +2,19 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Card, StatusBadge, Text } from '../../components'
 import { PageHeader } from './components/PageHeader'
-import { getCalendarEvents } from './calendar/data'
-import { getMaintenanceRequests } from './maintenance/data'
-import { getPayments } from './payments/data'
-import { getTenants } from './tenants/data'
-import { getUnits } from './units/data'
-import type { CalendarEvent, Payment, PaymentStatus, Tenant, Unit } from './data/types'
+import { api } from '../../lib/api'
+import type { CalendarEvent, Payment, PaymentStatus } from './data/types'
+
+interface DashboardStats {
+  totalUnits: number
+  occupiedUnits: number
+  vacantUnits: number
+  activeTenants: number
+  overdueTenants: number
+  openMaintenanceCount: number
+  recentPayments: Payment[]
+  upcomingEvents: CalendarEvent[]
+}
 
 const paymentStatusLabel: Record<PaymentStatus, string> = {
   paid: 'Paid',
@@ -25,11 +32,7 @@ const paymentStatusVariant: Record<PaymentStatus, 'success' | 'warning' | 'dange
 // (each fetched with a large pageSize, per §4's small-dataset allowance)
 // rather than a dedicated summary endpoint.
 export function AdminDashboard() {
-  const [units, setUnits] = useState<Unit[]>([])
-  const [tenants, setTenants] = useState<Tenant[]>([])
-  const [openMaintenanceCount, setOpenMaintenanceCount] = useState(0)
-  const [recentPayments, setRecentPayments] = useState<Payment[]>([])
-  const [upcomingEvents, setUpcomingEvents] = useState<CalendarEvent[]>([])
+  const [stats, setStats] = useState<DashboardStats | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -37,21 +40,11 @@ export function AdminDashboard() {
     let cancelled = false
     setIsLoading(true)
     setError(null)
-    Promise.all([
-      getUnits({ pageSize: 1000 }),
-      getTenants({ pageSize: 1000 }),
-      getMaintenanceRequests({ status: 'open', pageSize: 1 }),
-      getPayments({ sortBy: 'date', sortDir: 'desc', pageSize: 4 }),
-      getCalendarEvents({ sortDir: 'asc', pageSize: 4 }),
-    ]).then(([unitsResult, tenantsResult, maintenanceResult, paymentsResult, calendarResult]) => {
-      if (cancelled) return
-      setUnits(unitsResult.data)
-      setTenants(tenantsResult.data)
-      setOpenMaintenanceCount(maintenanceResult.total)
-      setRecentPayments(paymentsResult.data)
-      setUpcomingEvents(calendarResult.data || [])
-    })
-    .catch((err) => {
+    api.get<DashboardStats>('/admin/dashboard-stats')
+      .then((data) => {
+        if (!cancelled) setStats(data)
+      })
+    .catch((err: unknown) => {
       if (!cancelled) {
         console.error('Dashboard data fetch failed:', err)
         setError('Failed to load dashboard data.')
@@ -67,13 +60,7 @@ export function AdminDashboard() {
     }
   }, [])
 
-  const totalUnits = units.length
-  const occupiedUnits = units.filter((unit) => unit.status === 'occupied').length
-  const vacantUnits = units.filter((unit) => unit.status === 'vacant').length
-  const overdueTenants = tenants.filter((tenant) => tenant.rentStatus === 'overdue').length
-  const activeTenants = tenants.filter((tenant) => tenant.status === 'active').length
-
-  if (isLoading) {
+  if (isLoading || !stats) {
     return (
       <div>
         <PageHeader title="Dashboard" description="Plaza overview at a glance." />
@@ -106,10 +93,10 @@ export function AdminDashboard() {
             Units
           </Text>
           <Text variant="display" className="mt-1 text-slate-900">
-            {totalUnits}
+            {stats.totalUnits}
           </Text>
           <Text variant="bodySmall" className="mt-1 text-slate-500">
-            {occupiedUnits} occupied · {vacantUnits} vacant
+            {stats.occupiedUnits} occupied · {stats.vacantUnits} vacant
           </Text>
         </Card>
         <Card>
@@ -117,10 +104,10 @@ export function AdminDashboard() {
             Active tenants
           </Text>
           <Text variant="display" className="mt-1 text-slate-900">
-            {activeTenants}
+            {stats.activeTenants}
           </Text>
           <Text variant="bodySmall" className="mt-1 text-slate-500">
-            of {tenants.length} total
+            total
           </Text>
         </Card>
         <Card>
@@ -128,10 +115,10 @@ export function AdminDashboard() {
             Rent overdue
           </Text>
           <Text variant="display" className="mt-1 text-danger">
-            {overdueTenants}
+            {stats.overdueTenants}
           </Text>
           <Text variant="bodySmall" className="mt-1 text-slate-500">
-            tenant{overdueTenants === 1 ? '' : 's'} behind on rent
+            tenant{stats.overdueTenants === 1 ? '' : 's'} behind on rent
           </Text>
         </Card>
         <Card>
@@ -139,10 +126,10 @@ export function AdminDashboard() {
             Open tickets
           </Text>
           <Text variant="display" className="mt-1 text-slate-900">
-            {openMaintenanceCount}
+            {stats.openMaintenanceCount}
           </Text>
           <Text variant="bodySmall" className="mt-1 text-slate-500">
-            ticket{openMaintenanceCount === 1 ? '' : 's'} awaiting action
+            ticket{stats.openMaintenanceCount === 1 ? '' : 's'} awaiting action
           </Text>
         </Card>
       </div>
@@ -156,7 +143,7 @@ export function AdminDashboard() {
             </Link>
           </div>
           <div className="flex flex-col gap-3">
-            {recentPayments.map((payment) => (
+            {stats.recentPayments.map((payment) => (
               <Link
                 key={payment.id}
                 to={`/admin/payments/${payment.id}`}
@@ -184,7 +171,7 @@ export function AdminDashboard() {
             </Link>
           </div>
           <div className="flex flex-col gap-3">
-            {upcomingEvents.map((event) => (
+            {stats.upcomingEvents.map((event) => (
               <div key={event.id} className="flex items-center justify-between px-2 py-2">
                 <div>
                   <Text variant="body" className="text-slate-900">
