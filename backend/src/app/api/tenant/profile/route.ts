@@ -4,7 +4,7 @@ import { dbConnect } from '@/lib/db'
 import { User } from '@/models/User'
 import { Lease } from '@/models/Lease'
 import { ApiError } from '@/lib/api-error'
-import { withErrorHandling, requireRole, OPTIONS as corsOptions } from '@/lib/route-handler'
+import { withErrorHandling, requireAuth, OPTIONS as corsOptions } from '@/lib/route-handler'
 
 export { corsOptions as OPTIONS }
 
@@ -22,7 +22,7 @@ function toProfile(user: any, lease: any) {
 }
 
 export const GET = withErrorHandling(async (request: NextRequest) => {
-  const auth = requireRole(request, 'tenant')
+  const auth = requireAuth(request)
   await dbConnect()
   const user = await User.findById(auth.sub)
   if (!user) throw new ApiError('Not found', 404)
@@ -39,7 +39,7 @@ const updateProfileSchema = z
   .strict()
 
 export const PATCH = withErrorHandling(async (request: NextRequest) => {
-  const auth = requireRole(request, 'tenant')
+  const auth = requireAuth(request)
   const body = await request.json().catch(() => null)
   const parsed = updateProfileSchema.safeParse(body)
   if (!parsed.success) throw new ApiError('Invalid profile update', 400)
