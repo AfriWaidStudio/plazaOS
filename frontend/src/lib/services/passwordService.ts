@@ -12,6 +12,6 @@ export interface ChangePasswordResponse {
 
 export const passwordService = {
   async changePassword(payload: ChangePasswordPayload): Promise<ChangePasswordResponse | undefined> {
-    return await api.post<ChangePasswordResponse | undefined>('/auth/change-password', payload)
+    return await api.post<ChangePasswordResponse | undefined>('/auth/set-password', { newPassword: payload.newPassword })
   },
 }
