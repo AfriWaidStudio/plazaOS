@@ -59,6 +59,7 @@ export async function getMaintenanceRequest(requestId: string): Promise<Maintena
 
 export interface UpdateMaintenanceRequestInput {
   status?: MaintenanceStatus
+
   priority?: MaintenancePriority
   notes?: string
   resolvedAt?: string | null
@@ -66,9 +67,9 @@ export interface UpdateMaintenanceRequestInput {
 
 /** `PATCH /maintenance/:requestId`. */
 export async function updateMaintenanceRequest(id: string, updates: Partial<MaintenanceRequest>): Promise<MaintenanceRequest | null> {
-  return await api.patch(`/maintenance/${id}`, updates).catch(() => null)
+  return await api.patch<MaintenanceRequest>(`/maintenance/${id}`, updates).catch(() => null)
 }
 
 export async function addMaintenanceComment(id: string, content: string): Promise<any> {
-  return await api.post(`/maintenance/${id}/comments`, { content })
+  return await api.post<any>(`/maintenance/${id}/comments`, { content })
 }

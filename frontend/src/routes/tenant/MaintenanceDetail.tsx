@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { Button, Card, StatusBadge, Text, Textarea } from '../../components'
-import { BackLink } from '../components/BackLink'
-import { DetailField } from '../components/DetailField'
-import { PageHeader } from '../components/PageHeader'
+import { Button, Card, StatusBadge, Text } from '../../components'
+import { Textarea } from '../admin/components/Textarea'
+import { BackLink } from '../admin/components/BackLink'
+import { DetailField } from '../admin/components/DetailField'
+import { PageHeader } from '../admin/components/PageHeader'
 import { useMaintenanceDetail } from '../../hooks/useMaintenanceDetail'
 import type { MaintenanceStatus } from '../../lib/services/maintenanceService'
 
@@ -111,9 +112,10 @@ export function MaintenanceDetail() {
           </div>
           <div className="mt-4 flex flex-col gap-3 border-t border-slate-200 pt-4">
             <Textarea
+              label="Message"
               placeholder="Type a message..."
               value={commentText}
-              onChange={(e) => setCommentText(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setCommentText(e.target.value)}
               disabled={addComment.isPending}
             />
             <div className="flex justify-end">

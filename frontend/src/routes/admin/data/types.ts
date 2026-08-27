@@ -60,7 +60,7 @@ export interface MaintenanceRequest {
   id: string
   tenantId: string
   tenantName: string
-  unitId: string
+  unitId?: string
   unitNumber: string
   title: string
   description: string
@@ -68,9 +68,10 @@ export interface MaintenanceRequest {
   priority: MaintenancePriority
   category: TicketCategory
   images: string[]
-  notes: string
+  notes?: string
   createdAt: string
   resolvedAt: string | null
+  comments?: any[]
 }
 
 export type AnnouncementAudience = 'all' | 'selected'

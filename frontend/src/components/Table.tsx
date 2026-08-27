@@ -12,6 +12,7 @@ interface TableProps<T> {
   data: T[]
   getRowKey: (row: T) => string
   emptyMessage?: string
+  onRowClick?: (row: T) => void
 }
 
 type SortDirection = 'asc' | 'desc'
@@ -20,7 +21,7 @@ function getCellValue<T>(row: T, key: string): unknown {
   return (row as Record<string, unknown>)[key]
 }
 
-export function Table<T>({ columns, data, getRowKey, emptyMessage = 'No data available' }: TableProps<T>) {
+export function Table<T>({ columns, data, getRowKey, emptyMessage = 'No data available', onRowClick }: TableProps<T>) {
   const [sortKey, setSortKey] = useState<string | null>(null)
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
 
@@ -75,7 +76,11 @@ export function Table<T>({ columns, data, getRowKey, emptyMessage = 'No data ava
             </tr>
           ) : (
             sortedData.map((row) => (
-              <tr key={getRowKey(row)} className="border-t border-slate-200">
+              <tr 
+                key={getRowKey(row)} 
+                className={`border-t border-slate-200 ${onRowClick ? 'cursor-pointer hover:bg-slate-50 transition-colors' : ''}`}
+                onClick={() => onRowClick?.(row)}
+              >
                 {columns.map((column) => (
                   <td key={column.key} className="px-4 py-3 text-slate-900">
                     {column.render ? column.render(row) : String(getCellValue(row, column.key) ?? '')}

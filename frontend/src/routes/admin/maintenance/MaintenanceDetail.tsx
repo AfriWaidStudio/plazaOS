@@ -251,6 +251,7 @@ export function MaintenanceDetail() {
         </div>
         <div className="mt-4 flex flex-col gap-3 border-t border-slate-200 pt-4">
           <Textarea
+            label="Reply to tenant"
             placeholder="Type a message to the tenant..."
             value={commentText}
             onChange={(e) => setCommentText(e.target.value)}
