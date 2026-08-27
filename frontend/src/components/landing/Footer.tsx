@@ -2,23 +2,23 @@ import { Link } from 'react-router-dom'
 import { Text } from '../index'
 
 const PRODUCT_LINKS = [
-  { label: 'Features', href: '#features' },
-  { label: 'Solutions', href: '#solutions' },
-  { label: 'Updates', href: '#' },
+  { label: 'Features', href: '/#features' },
+  { label: 'Solutions', href: '/#solutions' },
+  { label: 'Updates', href: '/updates' },
 ]
 const COMPANY_LINKS = [
-  { label: 'About', href: '#' },
-  { label: 'Contact', href: '#' },
-  { label: 'Careers', href: '#' },
+  { label: 'About', href: '/about' },
+  { label: 'Contact', href: '/contact' },
+  { label: 'Careers', href: '/careers' },
 ]
 const RESOURCES_LINKS = [
-  { label: 'Help Center', href: '#' },
-  { label: 'Documentation', href: '#' },
-  { label: 'Support', href: '#' },
+  { label: 'Help Center', href: '/help' },
+  { label: 'Documentation', href: '/documentation' },
+  { label: 'Support', href: '/support' },
 ]
 const LEGAL_LINKS = [
-  { label: 'Privacy', href: '#' },
-  { label: 'Terms', href: '#' },
+  { label: 'Privacy', href: '/privacy' },
+  { label: 'Terms', href: '/terms' },
 ]
 
 export function Footer() {
@@ -40,9 +40,9 @@ export function Footer() {
             <ul className="mt-3 space-y-2">
               {PRODUCT_LINKS.map((link) => (
                 <li key={link.label}>
-                  <a href={link.href} className="text-sm text-slate-400 hover:text-white transition-colors">
+                  <Link to={link.href} className="text-sm text-slate-400 hover:text-white transition-colors">
                     {link.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -53,9 +53,9 @@ export function Footer() {
             <ul className="mt-3 space-y-2">
               {COMPANY_LINKS.map((link) => (
                 <li key={link.label}>
-                  <a href={link.href} className="text-sm text-slate-400 hover:text-white transition-colors">
+                  <Link to={link.href} className="text-sm text-slate-400 hover:text-white transition-colors">
                     {link.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -66,9 +66,9 @@ export function Footer() {
             <ul className="mt-3 space-y-2">
               {RESOURCES_LINKS.map((link) => (
                 <li key={link.label}>
-                  <a href={link.href} className="text-sm text-slate-400 hover:text-white transition-colors">
+                  <Link to={link.href} className="text-sm text-slate-400 hover:text-white transition-colors">
                     {link.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -79,9 +79,9 @@ export function Footer() {
             <ul className="mt-3 space-y-2">
               {LEGAL_LINKS.map((link) => (
                 <li key={link.label}>
-                  <a href={link.href} className="text-sm text-slate-400 hover:text-white transition-colors">
+                  <Link to={link.href} className="text-sm text-slate-400 hover:text-white transition-colors">
                     {link.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>

@@ -26,6 +26,15 @@ import { DevKit } from './routes/dev/DevKit'
 import { ForgotPassword } from './routes/ForgotPassword'
 import { Landing } from './routes/Landing'
 import { Login } from './routes/Login'
+import { Updates } from './routes/static/Updates'
+import { About } from './routes/static/About'
+import { Contact } from './routes/static/Contact'
+import { Careers } from './routes/static/Careers'
+import { HelpCenter } from './routes/static/HelpCenter'
+import { Documentation } from './routes/static/Documentation'
+import { Support } from './routes/static/Support'
+import { Privacy } from './routes/static/Privacy'
+import { Terms } from './routes/static/Terms'
 import { ProtectedRoute } from './routes/ProtectedRoute'
 import { ResetPassword } from './routes/ResetPassword'
 import { AccountSetup } from './routes/tenant/AccountSetup'
@@ -69,6 +78,15 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<Landing />} />
+      <Route path="/updates" element={<Updates />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/careers" element={<Careers />} />
+      <Route path="/help" element={<HelpCenter />} />
+      <Route path="/documentation" element={<Documentation />} />
+      <Route path="/support" element={<Support />} />
+      <Route path="/privacy" element={<Privacy />} />
+      <Route path="/terms" element={<Terms />} />
       <Route path="/login" element={<Login />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
